@@ -36,9 +36,11 @@ const agregarUsuario = async (req,res) => {
         if(respuesta && respuesta._id ) {
 
             const payload = {
-                id: respuesta._id,
-                nombre: respuesta.nombre,
-                email: respuesta.email,
+                usuario: {
+                    id: respuesta._id,
+                    nombre: respuesta.nombre,
+                    email: respuesta.email
+                }
             }
 
             jwt.sign(payload,process.env.JWT_SECRET,{
@@ -75,9 +77,30 @@ const agregarUsuario = async (req,res) => {
         })
     }
 }
+
+const obtenerUsuarioAutenticado = async (req,res) => {
+
+    try {
+
+        let usuario = await Usuario.findById(req.usuario.id).select('-password');
+        //select('-password'); esa funcion es para decirle cuales campos quiero traer, al enviarle el guion,
+        //le digo cuales campos no quiero
+        console.log(usuario)
+        //delete usuario["password"];
+        //delete usuario["registro"];
+        //console.log(usuario)
+        res.json({usuario});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: 'Hubo un error'
+        })
+    }
+}
  
 
 module.exports = {
 
-    agregarUsuario
+    agregarUsuario,
+    obtenerUsuarioAutenticado
 }

@@ -6,11 +6,13 @@ const conectarDB = require("./config/db");
 const app = express();
 conectarDB();
 
-
+// el la configuracion del cors debe cargarse antes que las rutas para poder proteger todas las rutas y
+// middlewares del servidor 
+const listaBlanca = ['http://localhost:3001']; // con este arreglo se puede pasar todas las urls que
 const corsOptions = {
     origin: (origin, callback) => { // el parametro origin es la ip que trata de hacer 
         //un request al servidor
-        console.log(origin)
+        console.log({origin})
         const existe = listaBlanca.some(dominio => dominio === origin); // si la ip entrante existe 
         //en la lista blanca, some indica si existe
 
@@ -19,7 +21,7 @@ const corsOptions = {
             //porque la ip es permitida, el segundo parametro es si el valor es permitido y 
             //en este caso va el true
         } else { //error generado por cors al no dar acceso a la API
-            callback(new Error('No permitido por CORS'));
+            callback('No permitido por cors',false);
         }
     }
 }
@@ -48,7 +50,7 @@ app.use('/api/v1',tareasRoutes());
 
 //habilitar cors
 //definir los dominios donde voy a van a recibir peticiones el servidor
-const listaBlanca = ['http://localhost:3001']; // con este arreglo se puede pasar todas las urls que
+
 // el servidor va aceptar
 
 const Server = http.createServer(app);
