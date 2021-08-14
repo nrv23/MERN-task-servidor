@@ -38,11 +38,12 @@ const agregarTarea = async (req,res) => {
             })
         } else {
             return res.status(201).json({
-                msg: 'Se ha agregado la tarea'
+                tarea: response
             })
         }
 
     } catch (error) {
+        console.log(error);
 
         if(error.code === 11000) {
             return res.status(400).json({
@@ -75,12 +76,6 @@ const obtenerTareasPorProyecto = async (req,res) => {
         }
 
         const tareas = await Tarea.find({ proyectoId: idproyecto });
-
-        if(!tareas || tareas.length === 0){
-            return res.status(404).json({
-                msg: 'No hay resultado'
-            })
-        }
 
         res.status(200).json({
             tareas
@@ -158,9 +153,7 @@ const actualizarEstadoTarea = async (req,res) => {
 
         await tarea.save();
 
-        res.status(200).json({
-            tarea
-        });
+        res.status(204).json();
 
     } catch (error) {
         console.log(error)

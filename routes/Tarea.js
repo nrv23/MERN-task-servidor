@@ -25,7 +25,7 @@ module.exports = () => {
         actualizarTarea
     );
 
-    router.put('/tarea/estado/:id',
+    router.patch('/tarea/estado/:id',
         validarToken,
         actualizarEstadoTarea
     );

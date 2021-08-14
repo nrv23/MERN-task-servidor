@@ -3,30 +3,37 @@ const {validationResult} = require("express-validator");
 
 const nuevoProyecto = async (req,res ) => {
 
-    const errores = validationResult(req); // aqui lee los campos de la peticion
-
-    if(!errores.isEmpty()){//sino viene vacío
-
-        return res.status(400).json({
-            errores: errores.array()
-        })
-    }
-
-
     try {
+       
+        const errores = validationResult(req); // aqui lee los campos de la peticion
+
+        if(!errores.isEmpty()){//sino viene vacío
+
+            return res.status(400).json({
+                errores: errores.array()
+            })
+        }
+
         const proyecto = new Proyecto(req.body);
         proyecto.creador = req.usuario.id;
-        proyecto.save();
+        await proyecto.save();
 
         res.status(201).json({
-            msg: 'Se ha guardado el proyecto'
+            proyecto
         });
 
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            err: 'Hubo un error en el servidor'
+        console.log("error",error)
+        if(error.code === 11000) {
+            return res.status(400).json({
+                msg: 'El proyecto que intenta ingresar ya existe'
+            })
+        }
+
+        return res.status(500).json({
+            msg: 'Hubo un error en el servidor'
         })
+        
     }
 }
 
@@ -44,7 +51,7 @@ const obtenerProyectosPorIdUsuarios = async (req,res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            err: 'Hubo un error en el servidor'
+            msg: 'Hubo un error en el servidor'
         })
     }
 }
@@ -90,7 +97,7 @@ const actualizarProyecto = async (req,res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            err: 'Hubo un error en el servidor'
+            msg: 'Hubo un error en el servidor'
         })
     }
 }
@@ -124,7 +131,7 @@ const eliminarProyecto = async (req,res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({
-            err: 'Hubo un error en el servidor'
+            msg: 'Hubo un error en el servidor'
         })
     }
 }
